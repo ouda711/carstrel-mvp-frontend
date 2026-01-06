@@ -430,7 +430,7 @@ export default function CarsPage() {
                 )}
                 {currentSearch && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-primary-50 text-primary-600 rounded-full text-sm">
-                    Search: "{currentSearch}"
+                    Search: &quot;{currentSearch}&quot;
                     <button
                       onClick={() => {
                         const params = new URLSearchParams(searchParams.toString());

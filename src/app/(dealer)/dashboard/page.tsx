@@ -52,7 +52,7 @@ export default function DashboardPage() {
             Welcome back, {user.dealership_name}! 👋
           </h2>
           <p className="text-gray-600">
-            Your dealer dashboard is ready. Here you'll manage your car inventory and leads.
+            Your dealer dashboard is ready. Here you&apos;ll manage your car inventory and leads.
           </p>
         </div>
 
