@@ -1,5 +1,50 @@
 import axios, { AxiosError } from 'axios';
 
+interface ErrorResponse {
+  message: string;
+  errors?: Record<string, string[]>;
+}
+
+interface CarsQueryParams {
+  page?: number;
+  limit?: number;
+  make?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minYear?: number;
+  maxYear?: number;
+  transmission?: string;
+  fuel_type?: string;
+  body_type?: string;
+  search?: string;
+}
+
+interface CarUpdateData {
+  make?: string;
+  model?: string;
+  year?: number;
+  price?: string;
+  mileage?: number;
+  transmission?: string;
+  fuel_type?: string;
+  body_type?: string;
+  color?: string;
+  description?: string;
+}
+
+interface LeadsQueryParams {
+  page?: number;
+  limit?: number;
+  status?: string;
+}
+
+interface ProfileUpdateData {
+  dealership_name?: string;
+  phone_number?: string;
+  location?: string;
+  email?: string;
+}
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 // Create axios instance with default config
@@ -24,7 +69,7 @@ api.interceptors.request.use(
 // Response interceptor
 api.interceptors.response.use(
   (response) => response.data,
-  (error: AxiosError<{ message?: string; errors?: unknown }>) => {
+  (error: AxiosError<ErrorResponse>) => {
     const message = error.response?.data?.message || 'An error occurred';
     return Promise.reject({
       message,
@@ -62,17 +107,7 @@ export const authAPI = {
 // Cars API
 export const carsAPI = {
   // Public endpoints
-  getAll: async (params?: {
-    page?: number;
-    limit?: number;
-    make?: string;
-    minPrice?: number;
-    maxPrice?: number;
-    year?: number;
-    transmission?: string;
-    fuel_type?: string;
-    search?: string;
-  }) => {
+  getAll: async (params?: CarsQueryParams) => {
     return api.get('/public/cars', { params });
   },
 
@@ -107,19 +142,7 @@ export const carsAPI = {
     });
   },
 
-  update: async (id: string, data: Partial<{
-    make: string;
-    model: string;
-    year: number;
-    price: number;
-    mileage: number;
-    transmission: string;
-    fuel_type: string;
-    body_type?: string;
-    color?: string;
-    description?: string;
-    status?: string;
-  }>) => {
+  update: async (id: string, data: CarUpdateData) => {
     return api.put(`/cars/${id}`, data);
   },
 
@@ -146,11 +169,7 @@ export const leadsAPI = {
   },
 
   // Protected endpoints (dealer)
-  getMyLeads: async (params?: {
-    status?: string;
-    page?: number;
-    limit?: number;
-  }) => {
+  getMyLeads: async (params?: LeadsQueryParams) => {
     return api.get('/leads', { params });
   },
 
@@ -167,21 +186,17 @@ export const leadsAPI = {
   },
 };
 
-// Dealers API (placeholder)
+// Dealers API (protected)
 export const dealersAPI = {
   getStats: async () => {
     return api.get('/dealers/stats');
   },
 
-  getMyCars: async () => {
-    return api.get('/dealers/cars');
+  getRecentCars: async (limit: number = 5) => {
+    return api.get('/dealers/recent-cars', { params: { limit } });
   },
 
-  updateProfile: async (data: {
-    dealership_name?: string;
-    phone_number?: string;
-    location?: string;
-  }) => {
+  updateProfile: async (data: ProfileUpdateData) => {
     return api.put('/dealers/profile', data);
   },
 };
